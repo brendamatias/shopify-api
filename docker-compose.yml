@@ -1,0 +1,12 @@
+version: "23.0.3"
+
+services:
+  db:
+    image: postgres:16
+    container_name: shopify_db
+    environment:
+      - POSTGRES_DB=shopify-db
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=123456
+    ports:
+      - 5432:5432
