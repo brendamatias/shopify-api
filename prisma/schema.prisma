@@ -14,10 +14,78 @@ datasource db {
 }
 
 model Product {
-  id    String  @id @default(cuid())
-  name  String  @unique
-  price Float
-  shopifyProductId String
+  id                BigInt    @id @unique
+  title             String
+  bodyHtml          String?
+  vendor            String
+  productType       String
+  handle            String
+  createdAt         DateTime
+  updatedAt         DateTime
+  publishedAt       DateTime?
+  templateSuffix    String?
+  publishedScope    String
+  tags              String
+  status            String
+  adminGraphqlApiId String
+  variants          Variant[]
+  options           Option[]
+  images            Image[]
 
-  @@map(name: "products")
+  @@map("products")
+}
+
+model Variant {
+  id                   BigInt   @id @unique
+  product              Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId            BigInt
+  title                String
+  price                Float
+  position             Int
+  inventoryPolicy      String
+  compareAtPrice       Float?
+  option1              String?
+  option2              String?
+  option3              String?
+  createdAt            DateTime
+  updatedAt            DateTime
+  taxable              Boolean
+  barcode              String?
+  fulfillmentService   String
+  grams                Int
+  inventoryManagement  String?
+  requiresShipping     Boolean
+  sku                  String
+  weight               Float
+  weightUnit           String
+  inventoryItemId      BigInt
+  inventoryQuantity    Int
+  oldInventoryQuantity Int
+  adminGraphqlApiId    String
+  imageId              BigInt?
+
+  @@map("variants")
+}
+
+model Option {
+  id        BigInt   @id @unique
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId BigInt
+  name      String
+  position  Int
+  values    String[]
+
+  @@map("options")
+}
+
+model Image {
+  id        BigInt   @id @unique
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId BigInt
+  src       String?
+  alt       String?
+  createdAt DateTime
+  updatedAt DateTime
+
+  @@map("images")
 }

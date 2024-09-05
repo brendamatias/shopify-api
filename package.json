@@ -7,7 +7,7 @@
     "node": "20"
   },
   "scripts": {
-    "dev": "tsx src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "tsup src",
     "start": "node dist/server.js"
   },
@@ -24,7 +24,10 @@
     "zod": "^3.23.8"
   },
   "dependencies": {
+    "@fastify/swagger": "^8.15.0",
+    "@fastify/swagger-ui": "^4.1.0",
     "@prisma/client": "^5.19.1",
+    "@shopify/shopify-api": "^11.3.0",
     "fastify": "^4.28.1"
   }
 }
