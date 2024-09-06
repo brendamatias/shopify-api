@@ -415,5 +415,8 @@ export const swaggerOptions = {
       },
     },
   },
-  apis: ["./src/routes/products.ts", "./src/routes/shopify.ts"],
+  apis: [
+    "./src/routes/products/products.ts",
+    "./src/routes/shopify/shopify.ts",
+  ],
 };
