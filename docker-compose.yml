@@ -10,3 +10,13 @@ services:
       - POSTGRES_PASSWORD=123456
     ports:
       - 5432:5432
+
+  db_test:
+    image: postgres:16
+    container_name: shopify_db_test
+    environment:
+      - POSTGRES_DB=shopify-db-test
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=123456
+    ports:
+      - 5433:5432

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { validateBigInt } from "../utils";
+import { validateBigInt } from "@/utils";
 
 export const listProductSchema = z.object({
   page: z.coerce.number().positive("Página inválida").default(1),

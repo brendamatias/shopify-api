@@ -1,13 +1,13 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import { prisma } from "../server";
-import { getMetaPagination, skip } from "../utils";
+import { prisma } from "@/server";
+import { getMetaPagination, skip } from "@/utils";
+import { Request, Response } from "express";
 import {
   createProductSchema,
   deleteProductSchema,
   getProductSchema,
   listProductSchema,
-} from "../schemas";
-import { session, shopify } from "../config";
+} from "@/schemas";
+import { session, shopify } from "@/config";
 import { DataType } from "@shopify/shopify-api";
 
 const formatProductData = (product: Product) => {
@@ -76,8 +76,8 @@ const formatProductData = (product: Product) => {
 };
 
 export const ProductController = {
-  async get(request: FastifyRequest, reply: FastifyReply) {
-    const { page, limit } = listProductSchema.parse(request.query);
+  async get(req: Request, res: Response) {
+    const { page, limit } = listProductSchema.parse(req.query);
 
     const [total, products] = await prisma.$transaction([
       prisma.product.count(),
@@ -93,12 +93,12 @@ export const ProductController = {
       id: product.id.toString(),
     }));
 
-    return reply
+    return res
       .status(200)
       .send(getMetaPagination({ page, limit, total, data }));
   },
-  async getById(request: FastifyRequest, reply: FastifyReply) {
-    const { id } = getProductSchema.parse(request.params);
+  async getById(req: Request, res: Response) {
+    const { id } = getProductSchema.parse(req.params);
     const client = new shopify.clients.Rest({ session });
 
     let product = await prisma.product.findUnique({
@@ -119,7 +119,7 @@ export const ProductController = {
         });
       }
 
-      return reply.status(200).send({
+      return res.status(200).send({
         ...product,
         id: product.id.toString(),
       });
@@ -128,16 +128,16 @@ export const ProductController = {
       const status = err?.response?.code;
 
       if (status === 404) {
-        return reply.status(404).send({ message: "Produto não encontrado" });
+        return res.status(404).send({ message: "Produto não encontrado" });
       }
 
-      return reply
+      return res
         .status(500)
         .send({ message: "Ocorreu um erro ao tentar visualizar produto" });
     }
   },
-  async create(request: FastifyRequest, reply: FastifyReply) {
-    const body = createProductSchema.parse(request.body);
+  async create(req: Request, res: Response) {
+    const body = createProductSchema.parse(req.body);
 
     const client = new shopify.clients.Rest({ session });
 
@@ -153,10 +153,10 @@ export const ProductController = {
       data: formatProductData(shopifyProduct),
     });
 
-    return reply.status(201).send();
+    return res.status(201).send();
   },
-  async destroy(request: FastifyRequest, reply: FastifyReply) {
-    const { id } = deleteProductSchema.parse(request.params);
+  async destroy(req: Request, res: Response) {
+    const { id } = deleteProductSchema.parse(req.params);
 
     const client = new shopify.clients.Rest({ session });
 
@@ -182,22 +182,24 @@ export const ProductController = {
         });
       }
 
-      return reply.status(204).send();
+      return res.status(204).send();
     } catch (error) {
       const err = error as { response: { code: number } };
       const status = err?.response?.code;
 
       if (!product && status === 404) {
-        return reply.status(404).send({ message: "Produto não encontrado" });
+        return res.status(404).send({ message: "Produto não encontrado" });
       }
 
       if (product && status === 404) {
         await prisma.product.delete({
           where: { id },
         });
+
+        return res.status(204).send();
       }
 
-      return reply
+      return res
         .status(500)
         .send({ message: "Ocorreu um erro ao tentar deletar produto" });
     }

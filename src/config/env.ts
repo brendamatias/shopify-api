@@ -8,7 +8,9 @@ if (process.env.NODE_ENV === "test") {
 }
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(["development", "production"]).default("development"),
+  NODE_ENV: z
+    .enum(["test", "development", "production"])
+    .default("development"),
   DATABASE_URL: z.string(),
   PORT: z.coerce.number().default(3333),
   SHOPIFY_API_KEY: z.string(),

@@ -18,6 +18,9 @@ const shopify = shopifyApi({
   hostName: HOST_NAME,
   isEmbeddedApp: true,
   apiVersion: LATEST_API_VERSION,
+  logger: {
+    level: 0,
+  },
 });
 
 const session: Session = {

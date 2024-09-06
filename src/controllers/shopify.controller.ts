@@ -1,13 +1,13 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-import { session, shopify } from "../config";
-import { prisma } from "../server";
-import { getProductSchema, listProductSchema } from "../schemas";
-import { getMetaPagination } from "../utils";
+import { Request, Response } from "express";
+import { session, shopify } from "@/config";
+import { prisma } from "@/server";
+import { getProductSchema, listProductSchema } from "@/schemas";
+import { getMetaPagination } from "@/utils";
 import { DataType } from "@shopify/shopify-api";
 
 export const ShopifyController = {
-  async get(request: FastifyRequest, reply: FastifyReply) {
-    const { limit } = listProductSchema.parse(request.query);
+  async get(req: Request, res: Response) {
+    const { limit } = listProductSchema.parse(req.query);
     const client = new shopify.clients.Rest({ session });
 
     let productsCount = await client.get({
@@ -23,7 +23,7 @@ export const ShopifyController = {
       type: DataType.JSON,
     });
 
-    return reply.status(200).send(
+    return res.status(200).send(
       getMetaPagination({
         page: 1,
         limit,
@@ -32,8 +32,8 @@ export const ShopifyController = {
       })
     );
   },
-  async getById(request: FastifyRequest, reply: FastifyReply) {
-    const { id } = getProductSchema.parse(request.params);
+  async getById(req: Request, res: Response) {
+    const { id } = getProductSchema.parse(req.params);
     const client = new shopify.clients.Rest({ session });
 
     try {
@@ -42,21 +42,21 @@ export const ShopifyController = {
         query: { id: 1 },
       });
 
-      return reply.status(200).send(response.body.product);
+      return res.status(200).send(response.body.product);
     } catch (error) {
       const err = error as { response: { code: number } };
       const status = err?.response?.code;
 
       if (status === 404) {
-        return reply.status(404).send({ message: "Produto não encontrado" });
+        return res.status(404).send({ message: "Produto não encontrado" });
       }
 
-      return reply
+      return res
         .status(500)
         .send({ message: "Ocorreu um erro ao tentar visualizar produto" });
     }
   },
-  async sync(request: FastifyRequest, reply: FastifyReply) {
+  async sync(req: Request, res: Response) {
     const client = new shopify.clients.Rest({ session });
 
     const { body } = await client.get({
@@ -105,6 +105,7 @@ export const ShopifyController = {
             })),
           },
           variants: {
+            // @ts-ignore
             upsert: product.variants.map((variant) => ({
               where: {
                 id: variant.id,
@@ -258,6 +259,6 @@ export const ShopifyController = {
       },
     });
 
-    return reply.status(204).send();
+    return res.status(204).send();
   },
 };
