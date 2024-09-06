@@ -2,8 +2,8 @@
  * @openapi
  * /shopify/products:
  *   get:
- *     summary: Get a list of products shopify
- *     description: Retrieve a list of products with pagination.
+ *     summary: List shopify products
+ *     description: Returns the list of shopify products
  *     tags:
  *       - Shopify
  *     parameters:
@@ -38,12 +38,37 @@
  *                 message:
  *                   type: string
  *                   example: Error message
+ *   post:
+ *     tags:
+ *       - Shopify
+ *     summary: Create a product on shopify
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *          type: object
+ *          properties:
+ *          schema:
+ *            $ref: '#/components/schemas/ProductDTO'
+ *     responses:
+ *       201:
+ *         description: Product created successfully, no content in the response.
+ *       500:
+ *         description: An error occurred
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error message
  *
  * /shopify/products/{id}:
  *   get:
  *     tags:
  *       - Shopify
- *     summary: Get a product shopify by ID
+ *     summary: Get a product from shopify by ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -107,6 +132,7 @@ const router = express.Router();
 
 router.get("", ShopifyController.get);
 router.get("/:id", ShopifyController.getById);
+router.post("", ShopifyController.create);
 router.post("/sync", ShopifyController.sync);
 
 export default router;

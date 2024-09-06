@@ -2,8 +2,8 @@
  * @openapi
  * /products:
  *   get:
- *     summary: Get a list of products
- *     description: Retrieve a list of products with pagination.
+ *     summary: List products from database
+ *     description: Returns the list of products with pagination
  *     tags:
  *       - Products
  *     parameters:
@@ -43,7 +43,7 @@
  *   get:
  *     tags:
  *       - Products
- *     summary: Get a product by ID
+ *     summary: Get a product by ID and sync with Shopify
  *     parameters:
  *       - in: path
  *         name: id
@@ -82,7 +82,7 @@
  *   delete:
  *     tags:
  *       - Products
- *     summary: Delete a product
+ *     summary: Delete the product on Shopify and in the database
  *     parameters:
  *       - in: path
  *         name: id
@@ -117,7 +117,7 @@
  *   post:
  *     tags:
  *       - Products
- *     summary: Create a shopify product
+ *     summary: Create a product on Shopify and in the database
  *     requestBody:
  *       required: true
  *       content:

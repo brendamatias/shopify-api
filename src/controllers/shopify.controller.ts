@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 import { session, shopify } from "@/config";
 import { prisma } from "@/server";
-import { getProductSchema, listProductSchema } from "@/schemas";
+import {
+  createProductSchema,
+  getProductSchema,
+  listProductSchema,
+} from "@/schemas";
 import { getMetaPagination } from "@/utils";
 import { DataType } from "@shopify/shopify-api";
 
@@ -55,6 +59,18 @@ export const ShopifyController = {
         .status(500)
         .send({ message: "Ocorreu um erro ao tentar visualizar produto" });
     }
+  },
+  async create(req: Request, res: Response) {
+    const body = createProductSchema.parse(req.body);
+    const client = new shopify.clients.Rest({ session });
+
+    await client.post({
+      path: "products",
+      data: { product: body },
+      type: DataType.JSON,
+    });
+
+    return res.status(201).send();
   },
   async sync(req: Request, res: Response) {
     const client = new shopify.clients.Rest({ session });
