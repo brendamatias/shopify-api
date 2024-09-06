@@ -10,7 +10,10 @@ export const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://localhost:${env.PORT}`,
+        url:
+          env.NODE_ENV === "production"
+            ? "https://shopify-api-n0bq.onrender.com"
+            : `http://localhost:${env.PORT}`,
       },
     ],
     tags: [{ name: "Products" }, { name: "Shopify" }],
